@@ -5,13 +5,15 @@ project(
     default_options : [
         'buildtype=debug',
         'optimization=0',
-        'cpp_std=c++17'
+        'cpp_std=c++20'
     ],
     meson_version: '>= 0.60.0',
 )
 
 
 executable('risc-sa',
-           'main.cpp'
+           'main.cpp',
+           'filemgt/bitsfile.cpp',
+           'rv/instruction.cpp'
 )
 

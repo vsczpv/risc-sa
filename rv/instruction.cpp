@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <iostream>
+
 using namespace rsa::rv;
 
 rsa::rv::instruction::instruction(std::string_view filedata, std::string_view::iterator& at)

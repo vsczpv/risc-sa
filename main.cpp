@@ -31,7 +31,20 @@ auto rsa::main(int argc, char* argv[]) -> int
 	while (data_iter != data_view.cend()) insts.push_back(instruction(data_view, data_iter));
 
 	for (const auto& i : insts)
-		std::cout << "Instruction " << i.string() << " has value of " << i.value() << ", OP is " << (int) i.OP() << std::endl;
+	{
+		std::cout << "Instruction " << i.string() << " of type " << i.type() << " has:";
+		std::printf
+		(
+			"\n\t    OP: %02x"
+			"\n\t    RD: %02u"
+			"\n\t   RS1: %02u"
+			"\n\t   RS2: %02u"
+			"\n\tFUNCT3: %02x"
+			"\n\tFUNCT7: %02x",
+			i.OP(), i.RD(), i.RS1(), i.RS2(), i.FUNCT3(), i.FUNCT7()
+		);
+		std::cout << std::endl;
+	}
 
     return EXIT_SUCCESS;
 }

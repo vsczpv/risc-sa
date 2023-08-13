@@ -25,11 +25,13 @@ namespace rsa
 		{
 		private:
 
+			static constexpr std::size_t HIGHEST_ITEM = 0b1111111;
+
 			util::lookup_table <InstructionType> m_opcodes;
 
 			inline static opcode2type* instance = nullptr;
 
-			opcode2type(std::initializer_list <std::tuple <InstructionType, std::size_t>> ops) : m_opcodes(ops, InsT_Inval) {}
+			opcode2type(std::initializer_list <std::tuple <InstructionType, std::size_t>> ops) : m_opcodes(ops, InsT_Inval, HIGHEST_ITEM) {}
 
 		public:
 
@@ -40,7 +42,7 @@ namespace rsa
 			{
 				if (instance != nullptr) return *instance; else return
 				*(
-					instance = new opcode2type
+					instance =  new opcode2type
 					({
 						{InsT_I, 0b0000011}, // LOAD
 						//       0b0000111   // LOAD-FP     [InsT_I]

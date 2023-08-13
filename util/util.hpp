@@ -5,6 +5,8 @@
 #include <vector>
 #include <limits>
 
+#include <iostream>
+
 namespace util
 {
 	template <typename T> class lookup_table
@@ -13,16 +15,20 @@ namespace util
 		std::vector <T> m_elements;
 	public:
 		lookup_table(void) {}
-		lookup_table(std::initializer_list<std::tuple<T, std::size_t>> elems, T def)
+		lookup_table(std::initializer_list<std::tuple<T, std::size_t>> elems, T def, std::size_t highest_item)
 		{
 
-			std::size_t highest = std::numeric_limits<std::size_t>::max();
+			puts("a");
+
+			std::size_t highest = std::numeric_limits<std::size_t>::min();
 
 			for (auto& e : elems)
 			{
 				auto& [first, second] = e;
 				highest = highest < second ? second : highest;
 			}
+
+			this->m_elements.resize(highest_item);
 
 			for (std::size_t i = 0; i < highest; i++) this->m_elements[i] = def;
 

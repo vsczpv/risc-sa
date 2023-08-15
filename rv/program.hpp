@@ -5,6 +5,7 @@
 #include <rv/instruction.hpp>
 
 #include <span>
+#include <map>
 
 namespace rsa
 {
@@ -21,8 +22,9 @@ namespace rsa
 
 			program(std::string_view filename);
 
-			[[nodiscard ("getter")]] auto instructions(void) const noexcept -> std::span <const instruction>;
 
+
+			[[nodiscard ("getter")]] auto instructions(void) const noexcept -> std::span <const instruction>;
 			[[nodiscard ("pure")]]   auto has_opened(void)   const noexcept -> bool;
 
 		};

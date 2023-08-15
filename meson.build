@@ -15,6 +15,8 @@ executable('risc-sa',
            'main.cpp',
            'filemgt/bitsfile.cpp',
            'rv/instruction.cpp',
-           'rv/program.cpp'
+           'rv/program.cpp',
+           'rv/benchdata.cpp',
+           'rv/opcode.cpp'
 )
 

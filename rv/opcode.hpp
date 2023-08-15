@@ -12,14 +12,18 @@ namespace rsa
 
 		enum InstructionType
 		{
-			InsT_R,
-			InsT_I,
-			InsT_S,
-			InsT_B,
-			InsT_U,
-			InsT_J,
+			InsT_R = 1,
+			InsT_I = 2,
+			InsT_S = 3,
+			InsT_B = 4,
+			InsT_U = 5,
+			InsT_J = 6,
 			InsT_Inval
 		};
+
+		// Incrementing InsT_Inval is undefined behaviour
+		InstructionType operator++(InstructionType& type);
+		InstructionType operator++(InstructionType& type, int);
 
 		class opcode2type
 		{

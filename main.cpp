@@ -2,10 +2,7 @@
 
 #include <rsa.hpp>
 #include <rv/program.hpp>
-
-#include <string>
-#include <string_view>
-#include <vector>
+#include <rv/benchdata.hpp>
 
 using namespace rsa::rv;
 
@@ -37,6 +34,14 @@ auto rsa::main(int argc, char* argv[]) -> int
 		);
 		std::cout << std::endl;
 	}
+
+	auto organization = rv::organization ("2:2:5:4:3:3:2.25");
+
+	for (const auto& t : organization.typeperf)
+	{
+		std::cout << t.second << std::endl;
+	}
+	std::cout << organization.t_clock << std::endl;
 
     return EXIT_SUCCESS;
 }

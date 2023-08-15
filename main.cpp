@@ -37,11 +37,25 @@ auto rsa::main(int argc, char* argv[]) -> int
 
 	auto organization = rv::organization ("2:2:5:4:3:3:2.25");
 
+	if (!organization.is_valid())
+	{
+		std::cout << "Failed to load organization" << std::endl;
+		return EXIT_FAILURE;
+	}
+
 	for (const auto& t : organization.typeperf)
 	{
-		std::cout << t.second << std::endl;
+		std::cout << t.first << ":" << t.second << std::endl;
 	}
 	std::cout << organization.t_clock << std::endl;
+
+	auto result = program.characterize_against(organization);
+
+	std::printf
+	(
+		"Program ran %u cycles, with total time elapsed of %gns @ %g CPI.\n",
+		result.total_elapsed, result.time_elapsed, result.cycles_per_instruction
+	);
 
     return EXIT_SUCCESS;
 }

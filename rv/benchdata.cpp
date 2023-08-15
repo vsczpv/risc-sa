@@ -35,3 +35,8 @@ rsa::rv::organization::organization(std::string org)
 	this->t_clock = strtod(at, NULL);
 	this->m_valid = true;
 }
+
+[[nodiscard]] auto rsa::rv::organization::is_valid(void) const noexcept -> bool
+{
+	return this->m_valid;
+}

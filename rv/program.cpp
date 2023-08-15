@@ -27,3 +27,8 @@ rsa::rv::program::program (std::string_view filename)
 {
 	return this->m_instructions;
 }
+
+[[nodiscard]] auto rsa::rv::program::has_opened(void) const noexcept -> bool
+{
+	return this->m_file.has_opened();
+}

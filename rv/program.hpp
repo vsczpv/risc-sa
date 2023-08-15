@@ -23,6 +23,8 @@ namespace rsa
 
 			[[nodiscard ("getter")]] auto instructions(void) const noexcept -> std::span <const instruction>;
 
+			[[nodiscard ("pure")]]   auto has_opened(void)   const noexcept -> bool;
+
 		};
 	}
 }

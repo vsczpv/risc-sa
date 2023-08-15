@@ -18,7 +18,8 @@ namespace rsa
 		public:
 			bitsfile (std::string_view filename);
 
-			[[nodiscard ("getter")]] auto data(void) const noexcept -> std::string_view;
+			[[nodiscard ("getter")]] auto data(void)       const noexcept -> std::string_view;
+			[[nodiscard ("pure")]]   auto has_opened(void) const noexcept -> bool;
 
 			~bitsfile() = default;
 		};

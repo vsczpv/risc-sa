@@ -23,3 +23,8 @@ rsa::filemgt::bitsfile::bitsfile(std::string_view filename) :
 {
 	return this->m_direct_data;
 }
+
+[[nodiscard]] auto rsa::filemgt::bitsfile::has_opened(void) const noexcept -> bool
+{
+	return this->m_file_backend.is_open();
+}

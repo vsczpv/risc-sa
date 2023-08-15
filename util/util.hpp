@@ -18,8 +18,6 @@ namespace util
 		lookup_table(std::initializer_list<std::tuple<T, std::size_t>> elems, T def, std::size_t highest_item)
 		{
 
-			puts("a");
-
 			std::size_t highest = std::numeric_limits<std::size_t>::min();
 
 			for (auto& e : elems)

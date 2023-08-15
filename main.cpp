@@ -16,6 +16,12 @@ auto rsa::main(int argc, char* argv[]) -> int
 
 	auto program = rv::program ("examples/example1.txt");
 
+	if (!program.has_opened())
+	{
+		std::cout << "Failed to open file." << std::endl;
+		return EXIT_FAILURE;
+	}
+
 	for (const auto& i : program.instructions())
 	{
 		std::cout << "Instruction " << i.string() << " of type " << i.type() << " has:";

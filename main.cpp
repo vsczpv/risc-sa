@@ -1,8 +1,7 @@
 #include <iostream>
 
 #include <rsa.hpp>
-#include <rv/instruction.hpp>
-#include <filemgt/bitsfile.hpp>
+#include <rv/program.hpp>
 
 #include <string>
 #include <string_view>
@@ -15,22 +14,9 @@ auto rsa::main(int argc, char* argv[]) -> int
 
 	(void) argc, (void) argv;
 
-	auto file = filemgt::bitsfile ("examples/example1.txt");
-	auto data = file.data();
+	auto program = rv::program ("examples/example1.txt");
 
-	std::vector <instruction> insts;
-	{
-		auto newline_count = 0lu;
-		for (auto c : data) if (c == '\n') newline_count++;
-		insts.reserve(newline_count);
-	}
-
-	auto data_view = std::string_view (data);
-	auto data_iter = data_view.begin();
-
-	while (data_iter != data_view.cend()) insts.push_back(instruction(data_view, data_iter));
-
-	for (const auto& i : insts)
+	for (const auto& i : program.instructions())
 	{
 		std::cout << "Instruction " << i.string() << " of type " << i.type() << " has:";
 		std::printf

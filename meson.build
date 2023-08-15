@@ -14,6 +14,7 @@ project(
 executable('risc-sa',
            'main.cpp',
            'filemgt/bitsfile.cpp',
-           'rv/instruction.cpp'
+           'rv/instruction.cpp',
+           'rv/program.cpp'
 )
 

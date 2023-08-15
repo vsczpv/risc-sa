@@ -11,7 +11,7 @@ auto rsa::main(int argc, char* argv[]) -> int
 
 	(void) argc, (void) argv;
 
-	auto program = rv::program ("examples/example1.txt");
+	auto program = rv::program ("examples/example3.txt");
 
 	if (!program.has_opened())
 	{

@@ -3,7 +3,10 @@
 
 using namespace rsa::rv;
 
-rsa::rv::organization::organization(std::string org)
+rsa::rv::organization::organization(std::string org, int id)
+
+	: id(id)
+
 {
 
 	auto count = 0ul;
@@ -39,4 +42,25 @@ rsa::rv::organization::organization(std::string org)
 [[nodiscard]] auto rsa::rv::organization::is_valid(void) const noexcept -> bool
 {
 	return this->m_valid;
+}
+
+auto rsa::rv::result::print(void) -> void
+{
+	std::printf
+	(
+		"Organization %02i : Program ran %u cycles, with total time elapsed of %gns @ %g CPI.\n",
+		this->source_id,
+		this->total_elapsed, this->time_elapsed, this->cycles_per_instruction
+	);
+}
+
+auto rsa::rv::compare_results(result& a, result& b) -> std::pair <double, result&>
+{
+
+	auto r_a = 1.f / a.time_elapsed;
+	auto r_b = 1.f / b.time_elapsed;
+
+	if (r_a > r_b) return {r_a / r_b, a};
+	else           return {r_b / r_a, b};
+
 }

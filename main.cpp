@@ -4,7 +4,7 @@
 #include <rv/program.hpp>
 #include <rv/benchdata.hpp>
 
-using namespace rsa::rv;
+using namespace rsa;
 
 auto rsa::main(int argc, char* argv[]) -> int
 {
@@ -19,43 +19,24 @@ auto rsa::main(int argc, char* argv[]) -> int
 		return EXIT_FAILURE;
 	}
 
-	for (const auto& i : program.instructions())
-	{
-		std::cout << "Instruction " << i.string() << " of type " << i.type() << " has:";
-		std::printf
-		(
-			"\n\t    OP: %02x"
-			"\n\t    RD: %02u"
-			"\n\t   RS1: %02u"
-			"\n\t   RS2: %02u"
-			"\n\tFUNCT3: %02x"
-			"\n\tFUNCT7: %02x",
-			i.OP(), i.RD(), i.RS1(), i.RS2(), i.FUNCT3(), i.FUNCT7()
-		);
-		std::cout << std::endl;
-	}
+	auto org1 = rv::organization ("2:2:5:4:3:3:2.25", 1);
+	auto org2 = rv::organization ("5:4:5:4:4:5:00.5", 2);
 
-	auto organization = rv::organization ("2:2:5:4:3:3:2.25");
-
-	if (!organization.is_valid())
+	if (!org1.is_valid() || !org2.is_valid())
 	{
 		std::cout << "Failed to load organization" << std::endl;
 		return EXIT_FAILURE;
 	}
 
-	for (const auto& t : organization.typeperf)
-	{
-		std::cout << t.first << ":" << t.second << std::endl;
-	}
-	std::cout << organization.t_clock << std::endl;
+	auto res1 = program.characterize_against(org1);
+	auto res2 = program.characterize_against(org2);
 
-	auto result = program.characterize_against(organization);
+	res1.print();
+	res2.print();
 
-	std::printf
-	(
-		"Program ran %u cycles, with total time elapsed of %gns @ %g CPI.\n",
-		result.total_elapsed, result.time_elapsed, result.cycles_per_instruction
-	);
+	auto comp = rv::compare_results(res1, res2);
+
+	std::printf("Organization %02i is the better one, on a ratio of %g to 1.\n", comp.second.source_id, comp.first);
 
     return EXIT_SUCCESS;
 }

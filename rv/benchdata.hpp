@@ -22,17 +22,28 @@ namespace rsa
 			std::map <InstructionType, cycles> typeperf;
 			double t_clock;
 
-			organization(std::string org);
+			const int id;
+
+			organization(std::string org, int id);
 
 			[[nodiscard ("pure")]] auto is_valid(void) const noexcept -> bool;
 		};
 
 		struct result
 		{
+
+			const int source_id;
+
 			cycles  total_elapsed;
 			mcycles cycles_per_instruction;
 			double  time_elapsed;
+
+			auto print(void) -> void;
+
+			friend auto compare_results(result& a, result& b) -> std::pair <double, result&>;
 		};
+
+		auto compare_results(result& a, result& b) -> std::pair <double, result&>;
 	}
 }
 

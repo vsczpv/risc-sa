@@ -27,7 +27,7 @@ rsa::rv::program::program (std::string_view filename)
 auto rsa::rv::program::characterize_against(rv::organization& org) const noexcept -> rv::result
 {
 
-	rv::result res = { 0 };
+	rv::result res = { .source_id = org.id };
 
 	for (const auto& i : this->m_instructions) res.total_elapsed += org.typeperf[i.type()];
 

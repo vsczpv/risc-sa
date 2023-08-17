@@ -21,6 +21,7 @@ namespace rsa
 
 		public:
 
+			program();
 			program(std::string_view filename);
 
 			auto characterize_against(rv::organization& org) const noexcept -> rv::result;

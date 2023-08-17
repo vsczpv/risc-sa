@@ -5,7 +5,8 @@
 using namespace rsa;
 using namespace rsa::rv;
 
-rsa::rv::program::program (std::string_view filename)
+rsa::rv::program::program(void) : m_file("") {}
+rsa::rv::program::program(std::string_view filename)
 
 	: m_file(filename)
 

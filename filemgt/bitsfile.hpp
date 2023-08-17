@@ -17,9 +17,12 @@ namespace rsa
 
 		public:
 			bitsfile (std::string_view filename);
+			bitsfile (bitsfile&& that);
 
 			[[nodiscard ("getter")]] auto data(void)       const noexcept -> std::string_view;
 			[[nodiscard ("pure")]]   auto has_opened(void) const noexcept -> bool;
+
+			bitsfile& operator=(bitsfile&& that);
 
 			~bitsfile() = default;
 		};

@@ -10,6 +10,7 @@
 
 namespace rsa
 {
+	extern std::deque <rv::result>       results;
 	extern std::deque <rv::organization> organizations;
 	extern rv::program program;
 

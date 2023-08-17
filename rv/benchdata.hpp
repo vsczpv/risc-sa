@@ -41,6 +41,8 @@ namespace rsa
 			auto print(void) -> void;
 
 			friend auto compare_results(result& a, result& b) -> std::pair <double, result&>;
+
+			bool seen = false;
 		};
 
 		auto compare_results(result& a, result& b) -> std::pair <double, result&>;

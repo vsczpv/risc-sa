@@ -9,16 +9,17 @@
 
 using namespace rsa;
 
+std::deque <rv::result>       rsa::results;
 std::deque <rv::organization> rsa::organizations;
 rv::program                   rsa::program;
 
-auto parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>
+[[nodiscard]] auto rsa::parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>
 {
 
 	/*
 	 * risc-sa -o ORG PRG.txt
 	 */
-//	if (argc < 4) return "Not enough arguments";
+	if (argc < 2) return "Not enough arguments";
 
 	enum CmdState
 	{

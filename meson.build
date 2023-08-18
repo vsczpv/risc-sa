@@ -10,6 +10,11 @@ project(
     meson_version: '>= 0.60.0',
 )
 
+program_display_version = run_command('meta/get-version', check: true).stdout().strip()
+
+add_global_arguments(f'-DVERSION="@program_display_version@"',
+	language : 'cpp'
+)
 
 executable('risc-sa',
            'main.cpp',
@@ -20,4 +25,3 @@ executable('risc-sa',
            'rv/opcode.cpp',
            'app.cpp'
 )
-

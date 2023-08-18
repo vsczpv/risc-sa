@@ -7,6 +7,11 @@
 
 #include <iostream>
 
+#define VT_BOLD      "\033[1m"
+#define VT_UNDERLINE "\033[4m"
+
+#define VT_END       "\033[0m"
+
 namespace util
 {
 	template <typename T> class lookup_table

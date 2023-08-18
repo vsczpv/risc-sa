@@ -1,3 +1,0 @@
-#!/bin/sh
-
-meson compile -C build/ && build/risc-sa

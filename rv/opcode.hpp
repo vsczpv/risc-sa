@@ -32,6 +32,7 @@ namespace rsa
 	namespace rv
 	{
 
+		/* NOTE: InsT_L is the same as InsT_I, but for LOAD operations */
 		enum InstructionType
 		{
 			InsT_R = 1,
@@ -40,8 +41,11 @@ namespace rsa
 			InsT_B = 4,
 			InsT_U = 5,
 			InsT_J = 6,
+			InsT_L = 7,
 			InsT_Inval
 		};
+
+		constexpr std::size_t InsT_amount = 7;
 
 		// Incrementing InsT_Inval is undefined behaviour
 		InstructionType operator++(InstructionType& type);
@@ -70,7 +74,7 @@ namespace rsa
 				*(
 					instance =  new opcode2type
 					({
-						{InsT_I, 0b0000011}, // LOAD
+						{InsT_L, 0b0000011}, // LOAD
 						//       0b0000111   // LOAD-FP     [InsT_I]
 						//       0b0001011   // custom-0    [undef]
 						{InsT_I, 0b0001111}, // MISC-MEM

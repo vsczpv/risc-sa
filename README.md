@@ -84,16 +84,20 @@ Usage: risc-sa {-o <ORG>} ... PROGRAM
 
                     The format specified must be in the following format:
 
-                        R:I:S:B:U:J:TCLK
+                        R:I:S:B:U:J:L:TCLK
 
                     Where all but TCLK are integer values of how much clockcycles the referred ins-
                     truction format takes to execute, and TCLK is a decimal value of how long it takes
                     for a clock to cycle, in nanoseconds. For example:
 
-                        2:2:5:4:3:3:2.25
+                        2:2:5:4:3:3:3:2.25
 
                     Will specify an organization which takes 2.25 nanoseconds per clock, 2 clocks for
-                    R typpe, 2 for I type, 5 for S type, 4 for B type, 3 for U type and 3 for J type.
+                    R type, 2 for I type, 5 for S type, 4 for B type, 3 for U type, 3 for J type and 3 for L type.
+
+                    Also note that the ficticious format "L" is actually the format I, but from LOAD
+                    instructions, as these use a different amount of cycles from normal I operations in
+                    certain organizations.
 
                     You must specify atleast one organization.
 
@@ -104,8 +108,8 @@ Usage: risc-sa {-o <ORG>} ... PROGRAM
     PROGRAM must be a path to a valid, binary-in-ASCII encoded RV32I program.
     The numbers in <ORG> can be any digit readable by strtol(3) [integers] and strtod(3) [floats].
 
-Ex.:   risc-sa -o 2:2:5:4:3:3:2.25 program.txt
-       risc-sa examples/example3.txt -o 2:2:5:4:3:3:2.25 -o 5:4:5:4:4:5:00.5 -o 1:1:1:1:1:1:15.0
+Ex.:   risc-sa -o 2:2:5:4:3:3:3:2.25 program.txt
+       risc-sa examples/example3.txt -o 2:2:5:4:3:3:2:2.25 -o 5:4:5:4:4:5:4:00.5 -o 1:1:1:1:1:1:1:15.0
 ```
 
 # Contact

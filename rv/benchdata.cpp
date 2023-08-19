@@ -34,7 +34,7 @@ rsa::rv::organization::organization(std::string org, int id)
 	auto count = 0ul;
 	for (auto c : org) if (c == ':') count++;
 
-	if (count != 6) return;
+	if (count != InsT_amount) return;
 
 	InstructionType current_type = InsT_R;
 

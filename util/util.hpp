@@ -25,7 +25,6 @@
 
 #include <tuple>
 #include <vector>
-#include <limits>
 
 #include <iostream>
 
@@ -45,17 +44,8 @@ namespace util
 		lookup_table(std::initializer_list<std::tuple<T, std::size_t>> elems, T def, std::size_t highest_item)
 		{
 
-			std::size_t highest = std::numeric_limits<std::size_t>::min();
-
-			for (auto& e : elems)
-			{
-				auto& [first, second] = e;
-				highest = highest < second ? second : highest;
-			}
-
 			this->m_elements.resize(highest_item);
-
-			for (std::size_t i = 0; i < highest; i++) this->m_elements[i] = def;
+			for (std::size_t i = 0; i < highest_item; i++) this->m_elements[i] = def;
 
 			for (auto& e : elems)
 			{

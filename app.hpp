@@ -32,9 +32,17 @@
 
 namespace rsa
 {
+
+	enum Mode
+	{
+		Characterize,
+		Optimize
+	};
+
 	extern std::deque <rv::result>       results;
 	extern std::deque <rv::organization> organizations;
 	extern rv::program program;
+	extern Mode mode;
 
 	auto parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>;
 }

@@ -26,6 +26,7 @@
 #include <util/util.hpp>
 
 #include <tuple>
+#include <cstdint>
 
 namespace rsa
 {
@@ -111,6 +112,8 @@ namespace rsa
 			}
 
 		};
+
+		constexpr std::uint8_t LOAD_OP = 0b0000011;
 
 		constexpr std::size_t CLOBBER_RD  = 0b001;
 		constexpr std::size_t CLOBBER_RS1 = 0b010;

@@ -27,6 +27,8 @@ namespace rsa
 {
 	void characterize(void);
 	void optimize(void);
+
+	constexpr bool FOWARD = 3;
 }
 
 #endif

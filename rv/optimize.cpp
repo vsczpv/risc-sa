@@ -164,8 +164,6 @@ static void reorder(bool mode = false)
 
 			if (o2t[rsa::program.instructions()[j].OP()] == rsa::rv::InsT_B) break;
 
-			printf("%lu %lu\n", i, j);
-
 			auto is_compromised = (as_bitmask(rsa::program.instructions()[j].RS1()) & registers_clobbered)
 			                    | (as_bitmask(rsa::program.instructions()[j].RS2()) & registers_clobbered);
 
@@ -202,7 +200,7 @@ void rsa::optimize(void)
 
 	for (auto& i : rsa::program.instructions())
 	{
-		std::cout << i.string() << std::endl;
+		rsa::output << i.string() << std::endl;
 	}
 
 }

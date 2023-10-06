@@ -21,6 +21,7 @@
  */
 
 #include <rv/program.hpp>
+#include <app.hpp>
 
 #include <string_view>
 
@@ -56,7 +57,19 @@ auto rsa::rv::program::characterize_against(rv::organization& org) const noexcep
 
 	rv::result res = { .source_id = org.id };
 
-	for (const auto& i : this->m_instructions) res.total_elapsed += org.typeperf[i.type()];
+	if (rsa::characterize_as_pipline)
+	{
+		/*
+		 * Pipelined instructions take the same amount of time, plus the constant
+		 * pipeline width
+		 */
+		res.total_elapsed = 5 + (this->m_instructions.size() - 1);
+	}
+
+	else
+	{
+		for (const auto& i : this->m_instructions) res.total_elapsed += org.typeperf[i.type()];
+	}
 
 	res.time_elapsed = res.total_elapsed * org.t_clock;
 	res.cycles_per_instruction = (double) res.total_elapsed / (double) this->m_instructions.size();

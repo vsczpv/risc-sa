@@ -37,9 +37,10 @@ using namespace rsa;
 std::deque <rv::result>       rsa::results;
 std::deque <rv::organization> rsa::organizations;
 rv::program                   rsa::program;
-rv::program                   rsa::output;
+std::ofstream                 rsa::output;
 rsa::Mode                     rsa::mode;
 rsa::HazardsMode              rsa::hzmode;
+bool                          rsa::characterize_as_pipline;
 
 void version(std::int64_t)
 {
@@ -90,7 +91,7 @@ void version(std::int64_t)
 
 	std::string hazard_doc =
 		"Parse pipeline hazards and dump a new file with NOPs and reorded instructions.\n"
-		"This option must be used in conjunction to -t.\n"
+		"This option must be used in conjunction to -o.\n"
 		"Valid options are: 0 (insertonly), 1 (forward), 2 (reorder), 3 (both).\n";
 
 	HazardsMode hazard;
@@ -108,13 +109,25 @@ void version(std::int64_t)
 	auto output_opt = app.add_option("-o,--output", output, "Output file for optimization mode.")
 		->expected(0,1);
 
+	auto pipeline_opt = app.add_flag("-p,--pipeline", rsa::characterize_as_pipline, "Optimize program as if ran in a pipeline.")
+		->expected(0,1);
+
+	double pipeline_clock = 0.f;
+	auto pp_clock_opt = app.add_option("-l,--pipeline-clock", pipeline_clock, "Clock for pipeline characterization.")
+		->expected(0,1);
+
 	auto version_doc = "Displays version and copyright information.";
 	app.add_flag_function("--version", version, version_doc);
 
 	orgs_opt->excludes(hazard_opt);
+	orgs_opt->excludes(pipeline_opt);
+
+	hazard_opt->excludes(pipeline_opt);
 
 	hazard_opt->needs(output_opt);
 	output_opt->needs(hazard_opt);
+
+	pipeline_opt->needs(pp_clock_opt);
 
 	try { app.parse(argc, argv); } catch (const CLI::ParseError &e)
 	{
@@ -125,12 +138,14 @@ void version(std::int64_t)
 
 	if (!rsa::program.has_opened()) return "Error: Could not open specified program.";
 
-	if (orgs_opt->count() == 0 && hazard_opt->count() == 0) return "Error: Must specify atleas one mode";
+	if (orgs_opt->count() == 0 && hazard_opt->count() == 0 && (!rsa::characterize_as_pipline)) return "Error: Must specify atleast one mode";
 
 	if (orgs_opt->count()) rsa::mode = Characterize;
 	else                   rsa::mode = Optimize;
 
-	if (rsa::mode == Characterize)
+	if (rsa::characterize_as_pipline) rsa::mode = Characterize;
+
+	if (rsa::mode == Characterize && (!rsa::characterize_as_pipline))
 	{
 
 		for (std::size_t org_id = 0; org_id < orgs.size(); org_id++)
@@ -144,9 +159,17 @@ void version(std::int64_t)
 
 	}
 
+	else if (rsa::characterize_as_pipline)
+	{
+		rsa::organizations.push_back
+		(
+			rsa::rv::organization ("2:2:5:4:3:3:3:" + std::to_string (pipeline_clock), 1)
+		);
+	}
+
 	else
 	{
-		rsa::output = rv::program (output, rv::NoParse);
+		rsa::output = std::ofstream(output);
 		rsa::hzmode = hazard;
 	}
 

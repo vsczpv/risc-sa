@@ -59,6 +59,8 @@ namespace rsa
 
 			auto push_instruction(instruction ins) noexcept -> void;
 
+			auto clear_nops(void) -> void;
+
 		};
 	}
 }

@@ -105,7 +105,7 @@ static void insert_only(bool foward = false)
 			auto which_rs1 =  rsa::program.instructions()[i+1].RS1();
 			auto which_rs2 =  rsa::program.instructions()[i+1].RS2();
 			auto uses_rsx  =  fwd1_clbr->RS1()
-							|| fwd1_clbr->RS2();
+						   || fwd1_clbr->RS2();
 
 			if (uses_rsx) if (which_rs1 == which_rd || which_rd == which_rs2) { push(2, i+1); continue; }
 		}
@@ -115,7 +115,7 @@ static void insert_only(bool foward = false)
 			auto which_rs1 =  rsa::program.instructions()[i+2].RS1();
 			auto which_rs2 =  rsa::program.instructions()[i+2].RS2();
 			auto uses_rsx  =  fwd2_clbr->RS1()
-							|| fwd2_clbr->RS2();
+			               || fwd2_clbr->RS2();
 
 			if (uses_rsx) if (which_rs1 == which_rd || which_rd == which_rs2) { push(1, i+2); continue; }
 		}
@@ -124,8 +124,66 @@ static void insert_only(bool foward = false)
 
 }
 
-static void reorder(void)
+static void reorder(bool mode = false)
 {
+
+	auto o2t = rsa::rv::opcode2type   ::get();
+	auto o2c = rsa::rv::opcode2clobber::get();
+
+	std::size_t isz;
+	insert_only(mode);
+
+	for (std::size_t i = 0; i < (isz = rsa::program.instructions().size()); i++)
+	{
+
+		if ( !(rsa::program.instructions()[i].value() == rv::NOP_INSTRUCTION) ) continue;
+
+		/* bitmask */
+		uint32_t registers_clobbered = 0;
+
+		auto as_bitmask = [] (register_id r) { if (r == 0) return 0b0; else return 0b1 << r; };
+
+		auto clobber_register = [&o2c, &as_bitmask, isz, &registers_clobbered] (size_t index)
+		{
+			if (index >= 0 && index < isz)
+			{
+				if (o2c[rsa::program.instructions()[index].OP()].RD())
+				{
+					registers_clobbered |= as_bitmask(rsa::program.instructions()[index].RD());
+				}
+			}
+		};
+
+		clobber_register(i-2);
+		clobber_register(i-1);
+		clobber_register(i+1);
+		clobber_register(i+2);
+
+		for (std::size_t j = i+1; j < isz; j++)
+		{
+
+			if (o2t[rsa::program.instructions()[j].OP()] == rsa::rv::InsT_B) break;
+
+			printf("%lu %lu\n", i, j);
+
+			auto is_compromised = (as_bitmask(rsa::program.instructions()[j].RS1()) & registers_clobbered)
+			                    | (as_bitmask(rsa::program.instructions()[j].RS2()) & registers_clobbered);
+
+			if (rsa::program.instructions()[j].value() == rv::NOP_INSTRUCTION) continue;
+			if (is_compromised) { clobber_register(j); continue; }
+
+			std::swap
+			(
+				rsa::program.mut_instructions()[i],
+				rsa::program.mut_instructions()[j]
+			);
+
+			break;
+		}
+
+	}
+
+	rsa::program.clear_nops(); insert_only(mode);
 
 }
 
@@ -136,7 +194,8 @@ void rsa::optimize(void)
 	{
 		case rsa::InsertOnly: insert_only();            break;
 		case rsa::Foward:     insert_only(FOWARD);      break;
-		case rsa::Reorder:    reorder(); insert_only();
+		case rsa::Reorder:    reorder();                break;
+		case rsa::Both:       reorder(FOWARD);          break;
 		default:
 			break;
 	}

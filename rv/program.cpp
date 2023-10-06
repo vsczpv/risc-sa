@@ -83,3 +83,12 @@ auto rsa::rv::program::push_instruction(instruction ins) noexcept -> void
 {
 	return this->m_instructions;
 }
+
+auto rsa::rv::program::clear_nops(void) -> void
+{
+	std::erase_if(this->m_instructions, [] (instruction i) -> bool
+	{
+		if (i.value() == rv::NOP_INSTRUCTION) return true;
+		else                                  return false;
+	});
+}

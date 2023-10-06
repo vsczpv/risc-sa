@@ -49,10 +49,11 @@ namespace rsa
 
 	extern std::deque <rv::result>       results;
 	extern std::deque <rv::organization> organizations;
-	extern rv::program program;
-	extern rv::program output;
+	extern rv::program  program;
+	extern std::ofstream output;
 	extern Mode mode;
 	extern HazardsMode hzmode;
+	extern bool characterize_as_pipline;
 
 	auto parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>;
 }

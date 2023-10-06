@@ -61,7 +61,7 @@ Alternatively, you can manually run `meson setup build/` and `meson compile -C b
 From the source folder, test the program running:
 
 ```
-build/risc-sa examples/example3.txt -o 2:2:5:4:3:3:2.25 -o 5:4:5:4:4:5:0.5
+build/risc-sa -f examples/example3.txt -c 2:2:5:4:3:3:2.25 5:4:5:4:4:5:0.5
 ```
 
 The output should be the following:
@@ -108,7 +108,7 @@ Options:
 
   -z,--hazard ENUM:INT in [0 - 3] Needs: --output Excludes: --characterize-against
                               Parse pipeline hazards and dump a new file with NOPs and reorded instructions.
-                              This option must be used in conjunction to -t.
+                              This option must be used in conjunction to -o.
                               Valid options are: 0 (insertonly), 1 (forward), 2 (reorder), 3 (both).
 
   -f,--file TEXT:FILE REQUIRED

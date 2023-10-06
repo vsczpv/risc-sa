@@ -120,7 +120,7 @@ Started on 18/08/2023, last updated 18/08/2023.
 
 # License
 
-risc-sa is licensed under GNU GPL-3-or-later;
+risc-sa is licensed under GNU GPL-3-or-later; files under `thirdparty` licensed under their respective licenses.
 
 Full license is available in COPYING file, or alternitively at <https://www.gnu.org/licenses/>.
 

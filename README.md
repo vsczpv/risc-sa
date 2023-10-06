@@ -78,49 +78,56 @@ Organization 02 : Program ran 98 cycles, with total time elapsed of 49ns @ 4.454
 This prompt is also available in the program itself with `risc-sa --help`.
 
 ```
-Usage: risc-sa {-o <ORG>} ... PROGRAM
+RV32I static analyzer
+Usage: build/risc-sa [OPTIONS]
 
-       -o <ORG>     Specifies which organization(s) to use in the benchmark;
+Options:
+  -h,--help                   Print this help message and exit
+  -c,--characterize-against TEXT Excludes: --hazard
 
-                    The format specified must be in the following format:
+                              Specifies which organization(s) to use in the benchmark;
 
-                        R:I:S:B:U:J:L:TCLK
+                              The format specified must be in the following format:
 
-                    Where all but TCLK are integer values of how much clockcycles the referred ins-
-                    truction format takes to execute, and TCLK is a decimal value of how long it takes
-                    for a clock to cycle, in nanoseconds. For example:
+                                  R:I:S:B:U:J:L:TCLK
 
-                        2:2:5:4:3:3:3:2.25
+                              Where all but TCLK are integer values of how much clockcycles the referred ins-
+                              truction format takes to execute, and TCLK is a decimal value of how long it takes
+                              for a clock to cycle, in nanoseconds. For example:
 
-                    Will specify an organization which takes 2.25 nanoseconds per clock, 2 clocks for
-                    R type, 2 for I type, 5 for S type, 4 for B type, 3 for U type, 3 for J type and 3 for L type.
+                                  2:2:5:4:3:3:3:2.25
 
-                    Also note that the ficticious format "L" is actually the format I, but from LOAD
-                    instructions, as these use a different amount of cycles from normal I operations in
-                    certain organizations.
+                              Will specify an organization which takes 2.25 nanoseconds per clock, 2 clocks for
+                              R type, 2 for I type, 5 for S type, 4 for B type, 3 for U type, 3 for J type and 3 for L type.
 
-                    You must specify atleast one organization.
+                              Also note that the ficticious format "L" is actually the format I, but from LOAD
+                              instructions, as these use a different amount of cycles from normal I operations in
+                              certain organizations.
 
-       -h | --help  Displays this prompt.
+                              You must specify atleast one organization.
 
-       --version    Displays version and copyright information.
+  -z,--hazard ENUM:INT in [0 - 3] Needs: --output Excludes: --characterize-against
+                              Parse pipeline hazards and dump a new file with NOPs and reorded instructions.
+                              This option must be used in conjunction to -t.
+                              Valid options are: 0 (insertonly), 1 (forward), 2 (reorder), 3 (both).
 
-    PROGRAM must be a path to a valid, binary-in-ASCII encoded RV32I program.
-    The numbers in <ORG> can be any digit readable by strtol(3) [integers] and strtod(3) [floats].
+  -f,--file TEXT:FILE REQUIRED
+                              The program to be analyzed
+  -o,--output TEXT Needs: --hazard
+                              Output file for optimization mode.
+  --version                   Displays version and copyright information.
 
-Ex.:   risc-sa -o 2:2:5:4:3:3:3:2.25 program.txt
-       risc-sa examples/example3.txt -o 2:2:5:4:3:3:2:2.25 -o 5:4:5:4:4:5:4:00.5 -o 1:1:1:1:1:1:1:15.0
 ```
 
 # Contact
 
 Written by Vinícius Schütz Piva <vinicius.vsczpv@outlook.com>.
 
-Started on 18/08/2023, last updated 18/08/2023.
+Started on 18/08/2023, last updated 06/10/2023.
 
 # License
 
-risc-sa is licensed under GNU GPL-3-or-later;
+risc-sa is licensed under GNU GPL-3-or-later; files under `thirdparty` licensed under their respective licenses.
 
 Full license is available in COPYING file, or alternitively at <https://www.gnu.org/licenses/>.
 

@@ -41,54 +41,6 @@ rv::program                   rsa::output;
 rsa::Mode                     rsa::mode;
 rsa::HazardsMode              rsa::hzmode;
 
-/*
-
-[[nodiscard ("pure")]] static std::string usage(void)
-{
-	return "\n"
-		   "Usage: " VT_BOLD "risc-sa" VT_END " {-o " VT_UNDERLINE "<ORG>" VT_END "} ... " VT_UNDERLINE "PROGRAM" VT_END "\n"
-//	       "Usage: risc-sa {-c <ORG>[,...] | -t <SRT> -z <OUT> }"
-		   "\n"
-		   "       -c <ORG>[,...]  Specifies which organization(s) to use in the benchmark;\n"
-		   "\n"
-		   "                       The format specified must be in the following format:\n"
-		   "\n"
-		   "                           R:I:S:B:U:J:L:TCLK\n"
-		   "\n"
-		   "                       Where all but TCLK are integer values of how much clockcycles the referred ins-\n"
-		   "                       truction format takes to execute, and TCLK is a decimal value of how long it takes\n"
-		   "                       for a clock to cycle, in nanoseconds. For example:\n"
-		   "\n"
-		   "                           2:2:5:4:3:3:3:2.25\n"
-		   "\n"
-		   "                       Will specify an organization which takes 2.25 nanoseconds per clock, 2 clocks for\n"
-		   "                       R type, 2 for I type, 5 for S type, 4 for B type, 3 for U type, 3 for J type and 3 for L type.\n"
-		   "\n"
-		   "                       Also note that the ficticious format \"L\" is actually the format I, but from LOAD\n"
-		   "                       instructions, as these use a different amount of cycles from normal I operations in\n"
-		   "                       certain organizations.\n"
-		   "\n"
-		   "                       You must specify atleast" VT_BOLD " one " VT_END "organization.\n"
-		   "\n"
-		   "       -z <OUT>        Parse pipeline hazards and dump a new file with NOPs and reorded instructions.\n"
-		   "                       This option must be used in conjunction to -t.\n"
-		   "\n"
-		   "       -t <SRT>        Pipeline geometry. Valid options are: insertonly, forward, reorder, both.\n"
-		   "\n"
-		   "       -h | --help     Displays this prompt.\n"
-		   "\n"
-		   "       --version       Displays version and copyright information.\n"
-		   "\n"
-		   "    PROGRAM must be a path to a valid, binary-in-ASCII encoded RV32I program.\n"
-		   "    The numbers in <ORG> can be any digit readable by strtol(3) [integers] and strtod(3) [floats].\n"
-		   "\n"
-		   "Ex.:   risc-sa -o 2:2:5:4:3:3:3:2.25 program.txt\n"
-		   "       risc-sa examples/example3.txt -o 2:2:5:4:3:3:2:2.25 -o 5:4:5:4:4:5:4:00.5 -o 1:1:1:1:1:1:1:15.0"
-		   "\n"
-	;
-}
-*/
-
 void version(std::int64_t)
 {
 	std::cout <<
@@ -106,7 +58,7 @@ void version(std::int64_t)
 [[nodiscard]] auto rsa::parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>
 {
 
-	CLI::App app {"A thing\n Ohter thin"};
+	CLI::App app {"RV32I static analyzer"};
 
 	std::string org_doc =
 		"\n"

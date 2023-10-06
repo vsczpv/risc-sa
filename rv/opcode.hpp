@@ -111,6 +111,69 @@ namespace rsa
 			}
 
 		};
+
+		constexpr std::size_t CLOBBER_RD  = 0b001;
+		constexpr std::size_t CLOBBER_RS1 = 0b010;
+		constexpr std::size_t CLOBBER_RS2 = 0b100;
+
+		class clobber
+		{
+		private:
+			bool m_rd  = false;
+			bool m_rs1 = false;
+			bool m_rs2 = false;
+		public:
+			clobber() {}
+			clobber(std::size_t mask) noexcept
+			{
+				this->m_rd  = mask & CLOBBER_RD;
+				this->m_rs1 = mask & CLOBBER_RS1;
+				this->m_rs2 = mask & CLOBBER_RS2;
+			}
+			[[nodiscard ("getter")]] auto RD(void)  -> bool { return this->m_rd;  }
+			[[nodiscard ("getter")]] auto RS1(void) -> bool { return this->m_rs1; }
+			[[nodiscard ("getter")]] auto RS2(void) -> bool { return this->m_rs2; }
+		};
+
+		class opcode2clobber
+		{
+		private:
+
+			static constexpr std::size_t HIGHEST_ITEM = 0b1111111;
+
+			util::lookup_table <clobber> m_opcodes;
+
+			inline static opcode2clobber* instance = nullptr;
+
+			opcode2clobber(std::initializer_list <std::tuple <clobber, std::size_t>> ops) : m_opcodes(ops, clobber(0), HIGHEST_ITEM) {}
+
+		public:
+
+			clobber& operator[] (unsigned long long int i) { return this->m_opcodes[i]; }
+
+			opcode2clobber(void) {}
+			static opcode2clobber& get(void)
+			{
+				if (instance != nullptr) return *instance; else return
+				*(
+					instance =  new opcode2clobber
+					({
+						{CLOBBER_RD | CLOBBER_RS1              , 0b0000011}, // LOAD
+						{CLOBBER_RD | CLOBBER_RS1              , 0b0001111}, // MISC-MEM
+						{CLOBBER_RD | CLOBBER_RS1              , 0b0010011}, // OP-IMM
+						{CLOBBER_RD                            , 0b0010111}, // AUIPC
+						{             CLOBBER_RS1 | CLOBBER_RS2, 0b0100011}, // STORE
+						{CLOBBER_RD | CLOBBER_RS1 | CLOBBER_RS2, 0b0110011}, // OP
+						{CLOBBER_RD                            , 0b0110111}, // LUI
+						{CLOBBER_RD | CLOBBER_RS1 | CLOBBER_RS2, 0b0111011}, // OP-32
+						{             CLOBBER_RS1 | CLOBBER_RS2, 0b1100011}, // BRANCH
+						{CLOBBER_RD | CLOBBER_RS1              , 0b1100111}, // JALR
+						{CLOBBER_RD                            , 0b1101111}, // JAL
+						{0                                     , 0b1110011}, // SYSTEM
+					})
+				);
+			}
+		};
 	}
 }
 

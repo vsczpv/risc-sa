@@ -46,6 +46,8 @@ namespace rsa
 		constexpr std::size_t FUNCT3_SHIFT      = 12;
 		constexpr std::size_t FUNCT7_SHIFT      = 26;
 
+		constexpr uint32_t NOP_INSTRUCTION = 0b00000000000000000000000000010011;
+
 		class instruction
 		{
 		private:
@@ -60,6 +62,7 @@ namespace rsa
 
 			instruction(void) noexcept {}
 			instruction(std::string_view filedata, std::string_view::iterator& at);
+			instruction(uint32_t ins);
 
 			[[nodiscard ("getter")]] auto OP(void)     const noexcept -> uint8_t;
 			[[nodiscard ("getter")]] auto RD(void)     const noexcept -> uint8_t;

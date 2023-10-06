@@ -24,12 +24,14 @@
 #define RSA_RSA_HPP_
 
 #include <deque>
+#include <cstdint>
 
 namespace rsa
 {
 	extern "C" auto main(int, char**) -> int;
-	using cycles  = unsigned int;
-	using mcycles = double;
+	using cycles      = unsigned int;
+	using mcycles     = double;
+	using register_id = uint8_t;
 }
 
 #endif // RSA_RSA_HPP_

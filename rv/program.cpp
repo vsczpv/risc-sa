@@ -27,6 +27,8 @@
 using namespace rsa;
 using namespace rsa::rv;
 
+NoParse_t rsa::rv::NoParse;
+
 rsa::rv::program::program(void) : m_file("") {}
 rsa::rv::program::program(std::string_view filename)
 
@@ -46,6 +48,8 @@ rsa::rv::program::program(std::string_view filename)
 	while (data_iter != data_view.cend()) this->m_instructions.push_back(instruction(data_view, data_iter));
 
 }
+
+rsa::rv::program::program(std::string_view filename, NoParse_t) : m_file(filename) {}
 
 auto rsa::rv::program::characterize_against(rv::organization& org) const noexcept -> rv::result
 {
@@ -68,4 +72,14 @@ auto rsa::rv::program::characterize_against(rv::organization& org) const noexcep
 [[nodiscard]] auto rsa::rv::program::has_opened(void) const noexcept -> bool
 {
 	return this->m_file.has_opened();
+}
+
+auto rsa::rv::program::push_instruction(instruction ins) noexcept -> void
+{
+	this->m_instructions.push_back(ins);
+}
+
+[[nodiscard ("getter")]] auto rsa::rv::program::mut_instructions(void) -> std::vector <instruction>&
+{
+	return this->m_instructions;
 }

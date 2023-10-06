@@ -51,6 +51,28 @@ rsa::rv::instruction::instruction(std::string_view filedata, std::string_view::i
 	return;
 }
 
+rsa::rv::instruction::instruction(uint32_t ins)
+{
+
+	//TODO
+	if (ins == rsa::rv::NOP_INSTRUCTION)
+	{
+		static std::string _ = "00000000000000000000000000010011 # NOP";
+		this->m_string   = _;
+	}
+
+	else
+	{
+		static std::string _ = "?"; this->m_string = _;
+	}
+
+	this->m_value = ins;
+	this->m_type  = rsa::rv::opcode2type::get()[OP()];
+
+	return;
+}
+
+
 [[nodiscard]] auto rsa::rv::instruction::OP(void)     const noexcept -> uint8_t { return (this->m_value & OPCODE_MASK)      >> OPCODE_SHIFT;      }
 [[nodiscard]] auto rsa::rv::instruction::RD(void)     const noexcept -> uint8_t { return (this->m_value & REGISTER_D_MASK)  >> REGISTER_D_SHIFT;  }
 [[nodiscard]] auto rsa::rv::instruction::RS1(void)    const noexcept -> uint8_t { return (this->m_value & REGISTER_S1_MASK) >> REGISTER_S1_SHIFT; }

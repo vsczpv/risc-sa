@@ -30,12 +30,18 @@
 #include <string>
 #include <cstring>
 
+#include <thirdparty/CLI11.hpp>
+
 using namespace rsa;
 
 std::deque <rv::result>       rsa::results;
 std::deque <rv::organization> rsa::organizations;
 rv::program                   rsa::program;
+rv::program                   rsa::output;
 rsa::Mode                     rsa::mode;
+rsa::HazardsMode              rsa::hzmode;
+
+/*
 
 [[nodiscard ("pure")]] static std::string usage(void)
 {
@@ -81,100 +87,116 @@ rsa::Mode                     rsa::mode;
 		   "\n"
 	;
 }
+*/
 
-[[nodiscard ("pure")]] static std::string version(void)
+void version(std::int64_t)
 {
-	return "risc-sa, version " VERSION "\n"
+	std::cout <<
+			"risc-sa, version " VERSION "\n"
 	       "Copyright (C) 2023 Vinícius Schütz Piva\n"
 		   "Licensed under GNU GPL-3.0-or-later <http://gnu.org/licenses/gpl.html>\n"
 		   "\n"
 		   "This is free software; you are free to change and redistribute it.\n"
 		   "There is NO WARRANTY, to the extent permitted by law."
-	;
+	<< std::endl;
+
+	exit(0);
 }
 
 [[nodiscard]] auto rsa::parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>
 {
 
-	if (argc < 2) return "Error: Not enough arguments" + usage();
+	CLI::App app {"A thing\n Ohter thin"};
 
-	enum CmdState
+	std::string org_doc =
+		"\n"
+		"Specifies which organization(s) to use in the benchmark;\n"
+		"\n"
+		"The format specified must be in the following format:\n"
+		"\n"
+		"    R:I:S:B:U:J:L:TCLK\n"
+		"\n"
+		"Where all but TCLK are integer values of how much clockcycles the referred ins-\n"
+		"truction format takes to execute, and TCLK is a decimal value of how long it takes\n"
+		"for a clock to cycle, in nanoseconds. For example:\n"
+		"\n"
+		"    2:2:5:4:3:3:3:2.25\n"
+		"\n"
+		"Will specify an organization which takes 2.25 nanoseconds per clock, 2 clocks for\n"
+		"R type, 2 for I type, 5 for S type, 4 for B type, 3 for U type, 3 for J type and 3 for L type.\n"
+		"\n"
+		"Also note that the ficticious format \"L\" is actually the format I, but from LOAD\n"
+		"instructions, as these use a different amount of cycles from normal I operations in\n"
+		"certain organizations.\n"
+		"\n"
+		"You must specify atleast" VT_BOLD " one " VT_END "organization.\n";
+
+
+	auto orgs     = std::vector <std::string> ();
+	auto orgs_opt = app.add_option("-c,--characterize-against", orgs, org_doc)
+		->expected(0,1);
+
+	std::string hazard_doc =
+		"Parse pipeline hazards and dump a new file with NOPs and reorded instructions.\n"
+		"This option must be used in conjunction to -t.\n"
+		"Valid options are: 0 (insertonly), 1 (forward), 2 (reorder), 3 (both).\n";
+
+	HazardsMode hazard;
+	auto hazard_opt = app.add_option("-z,--hazard", hazard, hazard_doc)
+		->expected(0,1)
+		->check   (CLI::Range(0, 3));
+
+	std::string filename;
+	app.add_option("-f,--file", filename, "The program to be analyzed")
+		->required()
+		->expected(0,1)
+		->check   (CLI::ExistingFile);
+
+	std::string output;
+	auto output_opt = app.add_option("-o,--output", output, "Output file for optimization mode.")
+		->expected(0,1);
+
+	auto version_doc = "Displays version and copyright information.";
+	app.add_flag_function("--version", version, version_doc);
+
+	orgs_opt->excludes(hazard_opt);
+
+	hazard_opt->needs(output_opt);
+	output_opt->needs(hazard_opt);
+
+	try { app.parse(argc, argv); } catch (const CLI::ParseError &e)
 	{
-		OnDashAndProgramExpect,
-		OnOrgExtract
+		app.exit(e); return "";
 	}
-	state = OnDashAndProgramExpect;
 
-	bool running = true;
-	int  index   = 1;
+	rsa::program = rv::program (filename);
 
-	int  org_id = 0;
-	bool has_a_program   = false;
+	if (!rsa::program.has_opened()) return "Error: Could not open specified program.";
 
-	while (running)
+	if (orgs_opt->count() == 0 && hazard_opt->count() == 0) return "Error: Must specify atleas one mode";
+
+	if (orgs_opt->count()) rsa::mode = Characterize;
+	else                   rsa::mode = Optimize;
+
+	if (rsa::mode == Characterize)
 	{
 
-		auto& text = argv[index];
-
-		switch (state)
+		for (std::size_t org_id = 0; org_id < orgs.size(); org_id++)
 		{
-			case OnDashAndProgramExpect:
-			{
-				if (std::strcmp(text, "-o") == 0)
-				{
-					state = OnOrgExtract;
-					break;
-				}
+			rsa::organizations.push_back
+			(
+				rsa::rv::organization (std::string(orgs[org_id]), org_id+1)
+			);
+			if (!rsa::organizations[org_id].is_valid()) return "Error: Could not parse specified organization.";
+		};
 
-				else if (std::strcmp(text, "-h") == 0 || std::strcmp(text, "--help") == 0)
-					return "" + usage();
-
-				else if (std::strcmp(text, "--version") == 0)
-					return "" + version();
-
-				else if (text[0] == '-')
-					return "Error: Invalid argument." + usage();
-
-				else
-				{
-					if (has_a_program)         return "Error: Can only specify one program." + usage();
-
-					has_a_program = true;
-					rsa::program  = rv::program(text);
-
-					if (!program.has_opened()) return "Error: Could not open specified program.";
-				}
-			}
-			break;
-
-			case OnOrgExtract:
-			{
-
-				rsa::organizations.push_back
-				(
-					rsa::rv::organization (std::string(text), org_id+1)
-				);
-				if (!rsa::organizations[org_id].is_valid()) return "Error: Could not parse specified organization." + usage();
-
-				org_id++, state = OnDashAndProgramExpect;
-			}
-			break;
-		}
-
-		index++;
-		if (index == argc) break;
 	}
 
-//	switch (rsa::mode)
-//	{
-//		case Characterize:
-			if (has_a_program == false) return "You must specify a program."                + usage();
-			if (org_id == 0)            return "You must specify atleast one organization." + usage();
-//		break;
-//		case Optimize:
-//
-//		break;
-//	}
+	else
+	{
+		rsa::output = rv::program (output, rv::NoParse);
+		rsa::hzmode = hazard;
+	}
 
 	return std::nullopt;
 }

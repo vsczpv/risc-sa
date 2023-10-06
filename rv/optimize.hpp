@@ -20,41 +20,13 @@
  *
  */
 
-#ifndef RSA_APP_HPP_
-#define RSA_APP_HPP_
-
-#include <rv/program.hpp>
-#include <rv/benchdata.hpp>
-
-#include <deque>
-#include <optional>
-#include <string>
+#ifndef RSA_OPTIMIZE_HPP_
+#define RSA_OPTIMIZE_HPP_
 
 namespace rsa
 {
-
-	enum Mode
-	{
-		Characterize,
-		Optimize
-	};
-
-	enum HazardsMode
-	{
-		InsertOnly = 0,
-		Foward     = 1,
-		Reorder    = 2,
-		Both       = 3
-	};
-
-	extern std::deque <rv::result>       results;
-	extern std::deque <rv::organization> organizations;
-	extern rv::program program;
-	extern rv::program output;
-	extern Mode mode;
-	extern HazardsMode hzmode;
-
-	auto parse_cmdline(int argc, char* argv[]) -> std::optional <std::string>;
+	void characterize(void);
+	void optimize(void);
 }
 
-#endif // RSA_APP_HPP_
+#endif

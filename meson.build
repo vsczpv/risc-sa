@@ -23,5 +23,6 @@ executable('risc-sa',
            'rv/program.cpp',
            'rv/benchdata.cpp',
            'rv/opcode.cpp',
+           'rv/optimize.cpp',
            'app.cpp'
 )

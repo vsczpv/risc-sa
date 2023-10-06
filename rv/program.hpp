@@ -34,6 +34,9 @@ namespace rsa
 {
 	namespace rv
 	{
+
+		class NoParse_t {}; extern NoParse_t NoParse;
+
 		class program
 		{
 		private:
@@ -45,11 +48,16 @@ namespace rsa
 
 			program();
 			program(std::string_view filename);
+			program(std::string_view filename, NoParse_t);
 
 			auto characterize_against(rv::organization& org) const noexcept -> rv::result;
 
 			[[nodiscard ("getter")]] auto instructions(void) const noexcept -> std::span <const instruction>;
 			[[nodiscard ("pure")]]   auto has_opened(void)   const noexcept -> bool;
+
+			[[nodiscard ("getter")]] auto mut_instructions(void) -> std::vector <instruction>&;
+
+			auto push_instruction(instruction ins) noexcept -> void;
 
 		};
 	}
